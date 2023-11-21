@@ -1,0 +1,42 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Categories {
+  id       Int        @id @default(autoincrement())
+  name     String
+  products Products[]
+  Receipts Receipts[]
+}
+
+model Products {
+  id          Int        @id @default(autoincrement())
+  name        String
+  description String
+  price       Int
+  thumbnail   String
+  categoryId  Int
+  category    Categories @relation(fields: [categoryId], references: [id])
+  receipts    Receipts[]
+}
+
+model Receipts {
+  id           Int        @id @default(autoincrement())
+  title        String
+  productId    Int
+  categoryId   Int
+  total        Float
+  membershipId String
+  createdAt    DateTime   @default(now())
+  product      Products   @relation(fields: [productId], references: [id])
+  category     Categories @relation(fields: [categoryId], references: [id])
+}
